@@ -4,6 +4,8 @@ const suggestionItems = document.querySelectorAll(".suggests__item");
 
 const themeToggleButton = document.getElementById("themeToggler");
 const clearChatButton = document.getElementById("deleteButton");
+const userButton = document.getElementById("userButton");
+const messageUser = document.getElementById("message__user");
 
 //Variáveis de estado
 let currentUserMessage = null;
@@ -18,6 +20,9 @@ const loadSavedChatHistory = () => {
     JSON.parse(localStorage.getItem("saved-api-chats")) || [];
 
   const isLightTheme = localStorage.getItem("themeColor") === "light_mode";
+
+  const UserName = localStorage.getItem("userName");
+  if (UserName) messageUser.innerText = "Olá " + UserName + "!";
 
   document.body.classList.toggle("light_mode", isLightTheme);
   themeToggleButton.innerHTML = isLightTheme
@@ -76,14 +81,14 @@ const loadSavedChatHistory = () => {
     const messageTextElement =
       incomingMessageElement.querySelector(".message__text");
 
-    //Mostra os chats salvos sem o efeito "maquina de escrever"
+    //Mostra os chats salvos sem o efeito digitação
     showTypingEffect(
       rawApiResponse,
       parsedApiResponse,
       messageTextElement,
       incomingMessageElement,
       true
-    ); // 'true' pula o efeito "maquina de escrever"
+    ); // 'true' pula o efeito digitação
   });
 
   document.body.classList.toggle("hide-header", savedConversations.length > 0);
@@ -217,7 +222,7 @@ const addCopyButtonToCodeBlocks = () => {
         })
         .catch((err) => {
           console.error("Copy failed:", err);
-          alert("Unable to copy text!");
+          alert("Não foi possível copiar o texto!");
         });
     });
   });
@@ -294,6 +299,15 @@ const handleOutgoingMessage = () => {
   setTimeout(displayLoadingAnimation, 500); //Mostra animação de carregamento após atraso
 };
 
+//Salva o nome do usuário
+userButton.addEventListener("click", () => {
+  let user = prompt("Digite seu nome", "Gemini");
+  if (user && user.trim().length >= 2) {
+    localStorage.setItem("userName", user);
+    messageUser.innerText = "Olá " + user + "!";
+  }
+});
+
 // Alterna entre temas claros e escuros
 themeToggleButton.addEventListener("click", () => {
   const isLightTheme = document.body.classList.toggle("light_mode");
@@ -306,7 +320,9 @@ themeToggleButton.addEventListener("click", () => {
 
 //Limpa todo o histórico de bate-papo
 clearChatButton.addEventListener("click", () => {
-  if (confirm("Are you sure you want to delete all chat history?")) {
+  if (
+    confirm("Tem certeza de que deseja excluir todo o histórico de bate-papo?")
+  ) {
     localStorage.removeItem("saved-api-chats");
 
     // Recarrega o histórico do chat para refletir as alterações
