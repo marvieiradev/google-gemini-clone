@@ -108,6 +108,13 @@ body.hide-header .header {
   font-weight: 600;
 }
 
+.items__buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .suggests {
   display: flex;
   align-items: center;
